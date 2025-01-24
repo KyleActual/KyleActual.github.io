@@ -1,91 +1,97 @@
-
+```mermaid
 ---
 title: Example Structure of a Military Joint Force Group Executing a Fix Drill
 ---
 erDiagram
-    HQ ELEMENT ||--|{ ALPHA COMM TEAM : coordinates/sends orders
-    HQ ELEMENT ||--|{ BRAVO COMM TEAM : coordinates/sends orders
-    HQ ELEMENT {
+    HQ_ELEMENT ||--|{ ALPHA_6_COMM_TEAM : coordinates-and-directs
+    HQ_ELEMENT ||--|{ BRAVO_6_COMM_TEAM : coordinates-and-directs
+    HQ_ELEMENT {
         command team
     } 
-    ALPHA 6 COMM TEAM ||--|{ HQ ELEMENT : sends SITREP/receives orders
-    ALPHA 6 COMM TEAM ||--|{ ALPHA 1 FIX ELEMENT : coordinates
-    ALPHA 6 COMM TEAM ||--|{ ALPHA 2 MANEUVER ELEMENT : coordinates
-    ALPHA 6 COMM TEAM ||--|{ REMOTE FIRE SUPPORT : requests fire support
-    ALPHA 6 COMM TEAM {
+    ALPHA_6_COMM_TEAM ||--|{ HQ_ELEMENT : sends-SITREP-and-relays-orders
+    ALPHA_6_COMM_TEAM ||--|{ ALPHA_1_FIX_ELEMENT : coordinates
+    ALPHA_6_COMM_TEAM ||--|{ ALPHA_2_MANEUVER_ELEMENT : coordinates
+    ALPHA_6_COMM_TEAM ||--|{ REMOTE_FIRE_SUPPORT : requests-fire-support
+    ALPHA_6_COMM_TEAM {
         command team
     }    
-    BRAVO 6 COMM TEAM ||--|{ HQ ELEMENT : sends SITREP/receives orders
-    BRAVO 6 COMM TEAM ||--|{ BRAVO 1 OVERWATCH ELEMENT
-    BRAVO 6 COMM TEAM ||--|{ BRAVO 2 SECURITY ELEMENT
-    BRAVO 6 COMM TEAM ||--|{ BRAVO 3 JTAC ELEMENT
-    BRAVO 6 COMM TEAM {
+    BRAVO_6_COMM_TEAM ||--|{ HQ_ELEMENT : sends-SITREP-and-relays-orders
+    BRAVO_6_COMM_TEAM ||--|{ BRAVO_1_OVERWATCH_ELEMENT : coordinates-and-directs
+    BRAVO_6_COMM_TEAM ||--|{ BRAVO_2_SECURITY_ELEMENT : coordinates-and-directs
+    BRAVO_6_COMM_TEAM ||--|{ BRAVO_3_JTAC_ELEMENT : coordinates-and-directs
+    BRAVO_6_COMM_TEAM {
         command team
     }   
-    BRAVO 1 OVERWATCH ELEMENT ||--|{ BRAVO 6 COMM TEAM : sends SITREP
-    BRAVO 1 OVERWATCH ELEMENT ||--|{ ALPHA 1 FIX ELEMENT : provides visual feedback
-    BRAVO 1 OVERWATCH ELEMENT ||--|{ ALPHA 2 MANEUVER ELEMENT : provides visual feedback 
-    BRAVO 1 OVERWATCH ELEMENT {
+    BRAVO_1_OVERWATCH_ELEMENT ||--|{ BRAVO_6_COMM_TEAM : sends-SITREP-and-executes-orders
+    BRAVO_1_OVERWATCH_ELEMENT ||--|{ ALPHA_1_FIX_ELEMENT : visual-feedback
+    BRAVO_1_OVERWATCH_ELEMENT ||--|{ ALPHA_2_MANEUVER_ELEMENT : visual-feedback
+    BRAVO_1_OVERWATCH_ELEMENT ||--o{ OPFOR_ELEMENT_1 : observes
+    BRAVO_1_OVERWATCH_ELEMENT ||--o{ OPFOR_ELEMENT_2 : observes
+    BRAVO_1_OVERWATCH_ELEMENT {
         sniper team
         weapons team
     }
-    BRAVO 2 SECURITY ELEMENT ||--{ BRAVO 6 COMM TEAM : sends SITREP
-    BRAVO 2 SECURITY ELEMENT ||--{ BRAVO 1 OVERWATCH ELEMENT : coordinates with 
-    BRAVO 2 SECURITY ELEMENT }|..|{ ALPHA 1 FIX ELEMENT : supports/covers
-    BRAVO 2 SECURITY ELEMENT }|..|{ ALPHA 2 MANEUVER ELEMENT : supports/covers
-    BRAVO 2 SECURITY ELEMENT ||--o{ OPFOR ELEMENT 2 : engages on approach
-    BRAVO 2 SECURITY ELEMENT {
+    BRAVO_2_SECURITY_ELEMENT ||--|{ BRAVO_6_COMM_TEAM : sends-SITREP-and-executes-orders
+    BRAVO_2_SECURITY_ELEMENT ||--|{ BRAVO_1_OVERWATCH_ELEMENT : coordinates
+    BRAVO_2_SECURITY_ELEMENT }|..|{ ALPHA_1_FIX_ELEMENT : supports-and-covers
+    BRAVO_2_SECURITY_ELEMENT }|..|{ ALPHA_2_MANEUVER_ELEMENT : supports-and-covers
+    BRAVO_2_SECURITY_ELEMENT ||--o{ OPFOR_ELEMENT_1 : engages-flanking-elements
+    BRAVO_2_SECURITY_ELEMENT ||--o{ OPFOR_ELEMENT_2 : engages-approaching-enemy-reinforcements 
+    BRAVO_2_SECURITY_ELEMENT {
         security team1 
         security team2 
         security team3  
     }
-    BRAVO 3 JTAC ELEMENT ||--|{ BRAVO 6 COMM TEAM : sends SITREP
-    BRAVO 3 JTAC ELEMENT ||--|{ COBRA 1 CLOSE AIR SUPPORT : 
-    BRAVO 3 JTAC ELEMENT ||--|{ DAGGER 1 CLOSE AIR SUPPORT : 
-    BRAVO 3 JTAC ELEMENT ||--|{ ALPHA 6 COMM TEAM : coordinates with 
-    BRAVO 3 JTAC ELEMENT ||--o{ OPFOR ELEMENT 2 : engages via C.A.S.
-    BRAVO 3 JTAC ELEMENT {
+    BRAVO_3_JTAC_ELEMENT ||--|{ BRAVO_6_COMM_TEAM : sends-SITREP-and-executes-orders
+    BRAVO_3_JTAC_ELEMENT ||--|{ COBRA_1_CLOSE_AIR_SUPPORT : designates-targets
+    BRAVO_3_JTAC_ELEMENT ||--|{ DAGGER_1_CLOSE_AIR_SUPPORT : designates-targets
+    BRAVO_3_JTAC_ELEMENT ||--o{ OPFOR_ELEMENT_1 : relays-position-to-CAS
+    BRAVO_3_JTAC_ELEMENT ||--o{ OPFOR_ELEMENT_2 : relays-position-to-CAS
+    BRAVO_3_JTAC_ELEMENT {
         JTAC team
         DART team
     }    
-    ALPHA 1 FIX ELEMENT ||--|{ ALPHA 6 COMM TEAM : sends SITREP
-    ALPHA 1 FIX ELEMENT ||--|{ ALPHA 2 MANEUVER ELEMENT : coordinates with  
-    ALPHA 1 FIX ELEMENT ||--o{ OPFOR ELEMENT 1 : supresses/fixes
-    ALPHA 1 FIX ELEMENT {
+    ALPHA_1_FIX_ELEMENT ||--|{ ALPHA_6_COMM_TEAM : sends-SITREP-and-executes-orders
+    ALPHA_1_FIX_ELEMENT ||--|{ ALPHA_2_MANEUVER_ELEMENT : coordinates  
+    ALPHA_1_FIX_ELEMENT ||--o{ OPFOR_ELEMENT_1 : supresses-and-fixes
+    ALPHA_1_FIX_ELEMENT {
         HMG team1
         HMG team2
         Rifle team
         AT team
     }
-    ALPHA 2 MANEUVER ELEMENT ||--|{ ALPHA 6 COMM TEAM : sends SITREP
-    ALPHA 2 MANEUVER ELEMENT ||--|{ ALPHA 1 FIX ELEMENT : coordinates with
-    ALPHA 2 MANEUVER ELEMENT ||--o{ OPFOR ELEMENT 1 : flanks/closes with/destroys
-    ALPHA 2 MANEUVER ELEMENT {
-        Infantry squad x 4
+    ALPHA_2_MANEUVER_ELEMENT ||--|{ ALPHA_6_COMM_TEAM : sends-SITREP-and-executes-orders
+    ALPHA_2_MANEUVER_ELEMENT ||--|{ ALPHA_1_FIX_ELEMENT : coordinates 
+    ALPHA_2_MANEUVER_ELEMENT ||--o{ OPFOR_ELEMENT_1 : closes-with-and-destroys
+    ALPHA_2_MANEUVER_ELEMENT {
+        engagement-team x4
     }    
-    COBRA 1 CLOSE AIR SUPPORT ||--o{ BRAVO 3 JTAC ELEMENT : engages designated targets
-    COBRA 1 CLOSE AIR SUPPORT {
-        C-130X 
+    COBRA_1_CLOSE_AIR_SUPPORT ||--|{ BRAVO_3_JTAC_ELEMENT : recieves-target-data
+    COBRA_1_CLOSE_AIR_SUPPORT ||--o{ OPFOR_ELEMENT_1 : observes
+    COBRA_1_CLOSE_AIR_SUPPORT ||--o{ OPFOR_ELEMENT_2 : engages
+    COBRA_1_CLOSE_AIR_SUPPORT {
+        C-130X x1
     }
-    DAGGER 1 CLOSE AIR SUPPORT ||--o{ BRAVO 3 JTAC ELEMENT : engages designated targets
-    DAGGER 1 CLOSE AIR SUPPORT {
+    DAGGER_1_CLOSE_AIR_SUPPORT ||--|{ BRAVO_3_JTAC_ELEMENT : recieves-target-data
+    DAGGER_1_CLOSE_AIR_SUPPORT ||--o{ OPFOR_ELEMENT_2 : engages
+    DAGGER_1_CLOSE_AIR_SUPPORT {
         AH-64D x2 
     }    
-    REMOTE FIRE SUPPORT }|..|{ ALPHA 6 COMM TEAM : supports
-    REMOTE FIRE SUPPORT }|..|{ BRAVO 6 COMM TEAM : supports
-    REMOTE FIRE SUPPORT }|..|{ BRAVO 1 OVERWATCH ELEMENT : supports
-    REMOTE FIRE SUPPORT {
+    REMOTE_FIRE_SUPPORT }|..|{ ALPHA_6_COMM_TEAM : supports
+    REMOTE_FIRE_SUPPORT }|..|{ BRAVO_6_COMM_TEAM : supports
+    REMOTE_FIRE_SUPPORT }|..|{ BRAVO_1_OVERWATCH_ELEMENT : supports
+    REMOTE_FIRE_SUPPORT {
         battery company
     }
-    OPFOR ELEMENT 1 ||--|{ OPFOR ELEMENT 2 : maintains communication
-    OPFOR ELEMENT 1 {
+    OPFOR_ELEMENT_1 ||--|{ OPFOR_ELEMENT_2 : maintains-communication
+    OPFOR_ELEMENT_1 {
         infantry regulars
     }
-    OPFOR ELEMENT 2 }|..|{ OPFOR ELEMENT 1 : supports 
-    OPFOR ELEMENT 2 {
+    OPFOR_ELEMENT_2 }|..|{ OPFOR_ELEMENT_1 : supports 
+    OPFOR_ELEMENT_2 {
         infantry mechanized
     }    
-
+```
 
 
 

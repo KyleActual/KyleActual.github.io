@@ -92,6 +92,48 @@ erDiagram
         infantry mechanized
     }    
 ```
+***
+# EXPLANATION
+
+The above diagram displays an example of the elements involved in one segment of a military joint task force operation simulated in Arma 3. Arma 3 is a military simulator used by the U.S. Army for a variety of virtual training modules. It is capable of simulating all aspects of a real world scenario, using real military units, equipment, tactics, and real-world open terrain.
+
+In the scenario, the task force is executing a fix drill. In the fix drill, there are two main elements - the fixing element and the maneuvering element. The fixing element engages the target with sustained suppressive fire rendering them temporarily immobilized or 'fixed' in one position. While the target is fixed and unable to move freely, the maneuvering element advances - most often from a flank position - and engages the target directly from a much closer distance. The maneuver element then continues to close distance with and eventually overrun the target position. Despite the simplicity of this single task, the main elements nonetheless rely on a substantial network of supporting elements spanning multiple branches of the armed forces.    
+
+## ENTITIES
+- HQ ELEMENT - Headquarters element which contains the command team
+- OVERWATCH - observes battlefield from a distant vantage point
+- SECURITY - Guards exposed flanks and rear of other elements
+- JTAC - Joint Tactical Air Controller - communicates directly with close air support units while embedded with units on the ground
+- DART - Deployed Aircraft Response Team - responds to emergencies involving currently deployed air assets
+- CLOSE AIR SUPPORT - aircraft currently in the vicinity providing support to ground units
+- REMOTE FIRE SUPPORT - long range artillery from available battery units
+- OPFOR - opposition forces
+
+## RELATIONSHIP SPECIFICATIONS 
+- coordinates-and-directs - maintains a birds-eye-view of the battlespace, tracks the location of all entitites and directs individual units.
+- sends-SITREP-and-relays-orders - updates the command element with SITREPs (situation report), and relays orders from the HQ element to its subordinate elements
+- coordinates - maintains communication with in order to synchronize movements and prevent friendly fire
+- observes - maintains visual contact with and tracks the movements of target elements 
+- supports-and-covers - secures exposed flanks and rear positions of the attacking elements 
+- visual-feedback - real-time updates on battlefield movements 
+- designates-targets - assigns targets to supporting units
+- relays-position-to-CAS - determines the global position of a target and relays the location coordinates to close air support units 
+- supresses-and-fixes - initiates sustained suppressive fire in order to immobilize a target and allow friendly forces to move freely
+- recieves-target-data - recives the location of a target via the aircrafts head up display, relayed by a laser designator on the ground, and engages the target with laser guided weaponry.  
+- sends-SITREP-and-executes-orders - updates its command element with SITREPs and directly executes orders. 
+
+***
+
+
+
+
+
+
+
+
+
+
+
 
 
 

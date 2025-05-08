@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+
+<title>GPS TRACKER: Watch your GPS update as you walk</title>
+<style>
+
+body{
+   font-family: Verdana, sans-serif;
+   font-size: 300%;
+}
+
+input {
+   font-family: Verdana, sans-serif;
+   font-size: 120%;
+}
+
+</style>
+
+<body>
+
+<table width=100%  border=0><tr><td>
+<form name=search method=POST  onSubmit="go()">
+<a href="/phone/">&#11035;</a>
+&nbsp;
+<input type=button   value="Start" onClick="startgps()"   title="Turns GPS Tracker ON">
+&nbsp;
+<input type=button   value="Stop"  onClick="stopgps()"    title="Turn GPS Tracker OFF">
+&nbsp
+<input type="button" value="Geocode"         onClick="geocode();"    title="Get the Street Address for your current GPS location">
+</td>
+<td align=right><span id="message">OK</span></td>
+</tr></table>
+
+
+ 
+<table border=1 width=100%>
+
+<tr>
+<td colspan=2><span id="streetaddress"></span></td>
+</tr>
+
+<tr>
+<td align=center>&nbsp;&nbsp;&nbsp;&nbsp;Latitude&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td align=center>&nbsp;&nbsp;&nbsp;&nbsp;Longitude&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td><span id="latitude"  style="float: right;">&#177;00.000000</span></td>
+<td><span id="longitude" style="float: right;">&#177;000.000000</span></td>
+</tr>
+
+
+
+<tr>
+
+<td>
+   <span id="latdeg"  >00&deg;</span>
+   <span id="latmin"  >00'</span>
+   <span id="latsec"  >00"</span>
+   <span id="ns"      >North</span>
+</td>
+
+<td>
+   <span id="lngdeg"  >00&deg;</span>
+   <span id="lngmin"  >00'</span>
+   <span id="lngsec"  >00"</span>
+   <span id="ew"       >West</span>
+</td>
+
+</tr>
+<tr>
+<td>Accuracy</td>
+<td><span id="accuracy">0.0</span> meters</td>
+</tr>
+
+
+<tr><td colspan=2>&nbsp;</td></tr>
+
+<tr>
+<td>Altitude</td>
+<td><span id="altitude">0.0</span> meters</td>
+</tr>
+
+<tr>
+<td>Altitude Accuracy</td>
+<td><span id="altitudeaccuracy">0.0</span> meters</td>
+</tr>
+
+
+
+<tr><td colspan=2>&nbsp;</td></tr>
+
+<tr>
+<td>Heading</td>
+<td><span id="heading">0.0</span> degrees</td>
+</tr>
+
+
+<tr>
+<td>Speed (m/s)</td>
+<td><span id="speed">0.0</span> meters per second</td>
+</tr>
+
+<tr>
+<td>Speed (mph)</td>
+<td><span id="mph">0.0</span> miles per hour</td>
+</tr>
+
+<tr>
+<td>Speed (kph)</td>
+<td><span id="kph">0.0</span> kilometers per hour</td>
+</tr>
+
+
+<tr>
+<td>Timestamp</td>
+<td><span id="timestamp">00:00:00</span></td>
+</tr>
+
+
+<tr><td colspan=2>&nbsp;</td></tr>
+
+<tr>
+<td colspan=2><input type="button" value="PIN"             onClick="pin();" title="Add a Client at this Location">
+<input type=text name=company size=20>(Coming soon)
+</td>
+</tr>
+
+
+</table>
+<h1>Functions</h1>
+<table border=1>
+<tr><td><input type="button" value="Google"                 onClick="go();"            ></td><td>Google Map</td></tr>
+
+<tr><td><input type="button" value="MGRS"                   onClick="mgrs();"       ></td><td>Military Grid Reference System Lookup</td></tr>
+
+</table>
+</form>
+
+<!-- ------------------------ END OF HTML ----------------------------------------------------------------- -->
+
+<script>
+var gpson     = false;
+var latitude  = 0;
+var longitude = 0;
+var watchid   = false;
+var cnt       = 0;
+
+// https://www.w3schools.com/jsref/api_geolocation.asp
+
+function degminsec(retvalue,invalue)
+{
+   var scale1,scale2,w1,w2,w3;
+   var normal,deg,min,sec;
+
+   scale1 = 60 * 60 * 100;
+   scale2 = 60 * 100;
+
+
+   if (invalue < 0.00)
+   {
+      retvalue.sign = -1;
+      normal = 0-invalue;
+
+   }
+   else
+   {
+      retvalue.sign =  1;
+      normal = invalue;
+   }
+
+   w1 = normal * scale1;
+   w2 = w1 + 0.5;
+   w3 = Math.floor(w2);
+
+
+   deg = Math.floor(  w3 / scale1);
+   min = Math.floor( (w3 - deg*scale1)  / scale2 );
+   sec = (w3-( deg*scale1+ min*scale2)) / 100.00;
+
+
+   retvalue.deg = deg.toFixed(0);
+
+   retvalue.min = min.toFixed(0);
+
+   retvalue.sec = sec.toFixed(2);
+
+}
+
+
+function clx()
+{  
+   document.getElementById("message").innerHTML  = "OK";
+   document.getElementById("streetaddress").innerHTML  = "";
+
+   cnt=0;
+}
+
+
+function startgps()
+{  
+   const options = 
+   {
+     enableHighAccuracy: true,     
+     timeout: 10000,
+   };
+
+   if (gpson)
+   {
+      document.getElementById("message").innerHTML  = "GPS already running";
+      return;
+   }      
+   
+   document.getElementById("message").innerHTML  = "GPS started";
+   
+   watchid = navigator.geolocation.watchPosition(found,notfound,options);
+
+   gpson=true;
+
+   function notfound(err)
+   {
+     document.getElementById("message").innerHTML  = (`ERROR(${err.code}): ${err.message}`);
+   }
+   
+   
+   function found(position)
+   {
+
+      cnt++;
+      
+      latitude    = position.coords.latitude;
+      longitude   = position.coords.longitude; 
+      
+      
+      var lat  = {sign:0,deg:0, min:0, sec:0};
+      var lng  = {sign:0,deg:0, min:0, sec:0};
+      
+      degminsec(lat, latitude);
+      degminsec(lng, longitude);
+
+
+      document.getElementById("message").innerHTML    = cnt.toFixed(0);
+
+      document.getElementById("latitude" ).innerHTML  = latitude.toFixed(6);     
+      document.getElementById("longitude").innerHTML  = longitude.toFixed(6);  
+
+      document.getElementById("latdeg").innerHTML = lat.deg+"&deg;";
+      document.getElementById("latmin").innerHTML = lat.min+"'";
+      document.getElementById("latsec").innerHTML = lat.sec+'"';
+
+      document.getElementById("lngdeg").innerHTML = lng.deg+"&deg;";
+      document.getElementById("lngmin").innerHTML = lng.min+"'";
+      document.getElementById("lngsec").innerHTML = lng.sec+'"';
+
+
+
+      if (lat.sign == 1)
+         document.getElementById("ns").innerHTML = 'N';
+      else
+         document.getElementById("ns").innerHTML = 'S';
+
+
+      if (lng.sign == 1)
+         document.getElementById("ew").innerHTML = 'E';
+      else
+         document.getElementById("ew").innerHTML = 'W';
+         
+         
+      accuracy    = position.coords.accuracy;
+      document.getElementById("accuracy").innerHTML   = accuracy.toFixed(3);
+   
+      altitude    = position.coords.altitude;
+      document.getElementById("altitude").innerHTML   = altitude.toFixed(3);
+      
+      altitudeaccuracy = position.coords.altitudeAccuracy;
+      document.getElementById("altitudeaccuracy").innerHTML = altitudeaccuracy;
+      
+      heading     = position.coords.heading;
+      document.getElementById("heading").innerHTML    = heading.toFixed(1);
+      
+      speed       = position.coords.speed;  
+      document.getElementById("speed").innerHTML      = speed.toFixed(1);
+            
+
+      // MILES PER HOUR
+      
+      var mph = speed * 3600 / 1610.3;       
+      document.getElementById("mph").innerHTML = mph.toFixed(1);
+      
+
+      // KILOMETERS PER HOUR
+      
+      var kph = speed * 3.600;       
+      document.getElementById("kph").innerHTML = kph.toFixed(1);
+      
+      
+      // GPS DATE
+                  
+      const date = new Date(position.timestamp);
+      const datevalues = [
+         date.getFullYear(),
+         date.getMonth()+1,
+         date.getDate(),
+         date.getHours(),
+         date.getMinutes(),
+         date.getSeconds(),
+      ];
+      
+      document.getElementById("timestamp").innerHTML  = datevalues;
+      
+   }
+                        
+}
+
+function stopgps()
+{   
+   if (gpson)
+   {                  
+      gpson = false;
+      navigator.geolocation.clearWatch(watchid);
+      document.getElementById("message").innerHTML  = "GPS stopped";
+   }
+   else
+   {   
+      document.getElementById("message").innerHTML  = "GPS is already stopped";
+   }   
+}
+
+</script>
+
+
+
+<!-- ------------------------ TAKE GPS AND RUN ANOTHER APP ---------------------------------------- -->
+
+<hr>
+
+<script>
+
+
+function go()
+{
+   var base             = "https://maps.google.com/?q="
+   var coordinatestring = latitude+","+longitude;
+   var url              = base+coordinatestring;
+   
+   window.open(url);
+}
+
+function pin()
+{
+   var company = document.search.company.value;
+   var url   = 'https://legallandconverter.com/cgi/shopclient.cgi?cmd=add&LATITUDE='+ latitude + '&LONGITUDE=' + longitude + '&COMPANY=' + company;
+   window.open(url);
+}
+
+function edmonton2()
+{
+   var base= "https://landinfo.org/cgi-bin/shopcsv.cgi?&directory=data.edmonton.ca&filename=EdmontonTaxAssessment.csv&title=Edmonton Property Tax Assessment&sortfield=House Number";
+   var gps   = '&latitude='+ latitude + '&longitude=' + longitude;
+   var url   = base + gps;
+   window.open(url);
+}
+
+function edmonton()
+{
+   var url   = 'https://landinfo.org/cgi-bin/edm2024.cgi?cmd=gps&latitude='+ latitude + '&longitude=' + longitude;
+   window.open(url);
+}
+
+function edmontonbusiness()
+{
+
+   var url1 ='https://landinfo.org/cgi-bin/llcdraw.cgi?showform=0&cmd=DRAW&width=2500&height=2500&mapbox=0';
+   var url2 ='&ppd=500000&gray=0&line=1&water=1&road=1&rail=1&dls=0&acm=1&pipeline=0&well=0&scalebar=1&parcel=1&building=1&housenumber=0&legal=0&business=1';
+
+
+   var url3 = '&latitude='+ latitude + '&longitude=' + longitude;
+   window.open(url1+url2+url3);
+}
+
+function mrsid()
+{
+   var url   = 'https://landinfo.org/cgi-bin/drawedmonton.cgi?width=1920&height=1920&latitude='+ latitude + '&longitude=' + longitude;
+   window.open(url);
+}
+
+
+function dls()
+{
+   var url   = 'https://legallandconverter.com/cgi/shopats201703.cgi?cmd=reverse1&latitude='+ latitude + '&longitude=' + longitude;
+   window.open(url);
+}
+
+function plss()
+{
+   var url   = 'https://legallandconverter.com/cgi/shopplss.cgi?cmd=reverse1&latitude='+ latitude + '&longitude=' + longitude;
+   window.open(url);
+}
+
+function toporural()
+{
+   var base    = 'https://legallandconverter.com/cgi-bin/llcdraw.cgi?cmd=DRAW'
+
+   var gps     = '&latitude='+ latitude + '&longitude=' + longitude+'&spotlatitude='+ latitude + '&spotlongitude=' + longitude;
+
+   var layers  = "&dls=1&gray=1&line=1&pipeline=0&rail=1&road=1&scalebar=1&water=1&well=0+showform=1";
+
+   var url= base+gps+layers;
+
+   window.open(url);
+
+}
+
+function topoedmonton()
+{
+   var base    = 'https://legallandconverter.com/cgi-bin/llcdraw.cgi?cmd=DRAW&mapbox=0&ppd=500000'
+
+   var gps     = '&latitude='+ latitude + '&longitude=' + longitude+'&spotlatitude='+ latitude + '&spotlongitude=' + longitude;
+
+   var layers  = "&dls=0&gray=0&line=1&pipeline=0&rail=1&road=1&scalebar=1&water=1&well=0&parcel=1&building=1&housenumber=1&legal=0&business=0";
+
+   var url= base+gps+layers;
+
+   window.open(url);
+
+}
+
+function mgrs()
+{
+   var url   = 'https://landinfo.org/cgi-bin/shopmgrs201807.cgi?cmd=reverse1&&latitude='+ latitude + '&longitude=' + longitude;
+   window.open(url);
+}
+
+
+</script>
+
+<script>
+
+var xmlhttp=new XMLHttpRequest();
+
+xmlhttp.onreadystatechange=function()
+{
+   if (xmlhttp.readyState==4 && xmlhttp.status==200)
+   {
+      var data = JSON.parse(xmlhttp.responseText);
+
+     // top.document.title = data.features[0].place_name;
+
+      document.getElementById("streetaddress").innerHTML  = data.features[0].place_name;
+
+   }
+}
+
+function executequery(url)
+{
+   xmlhttp.open("GET",url,true);
+   xmlhttp.send();
+}
+
+
+
+
+function geocode()
+{
+
+   var clat  = latitude.toFixed(6);
+   var clong = longitude.toFixed(6);
+
+
+var url ='https://api.mapbox.com/geocoding/v5/mapbox.places/'+clong+','+clat+'.json/?access_token=pk.eyJ1IjoiZWRtb250b25hbGJlcnRhIiwiYSI6ImNqNThyZm53ejAyemUyd296YzlydXk4NTQifQ.W9EersEpdnGG6u2c6b384g';
+executequery(url);
+
+
+
+
+}
+
+function geocoderaw()
+{
+
+   var clat  = latitude.toFixed(6);
+   var clong = longitude.toFixed(6);
+
+
+   var url ='https://api.mapbox.com/geocoding/v5/mapbox.places/'+clong+','+clat+'.json/?access_token=pk.eyJ1IjoiZWRtb250b25hbGJlcnRhIiwiYSI6ImNqNThyZm53ejAyemUyd296YzlydXk4NTQifQ.W9EersEpdnGG6u2c6b384g';
+
+   window.open(url);
+
+
+
+
+}
+
+
+</script>
+
+
+</body>
+
+
+</html>
+
+
+
